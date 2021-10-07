@@ -7,7 +7,7 @@ import (
 
 	_ "image/png"
 
-	"github.com/deluan/lookup"
+	"github.com/tiinusen/lookup"
 )
 
 // Helper function to load an image from the filesystem

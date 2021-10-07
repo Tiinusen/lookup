@@ -19,7 +19,7 @@ original library's ['docs'](https://gitlab.com/axet/lookup/tree/master/docs) fol
 
 Add this library to your project with:
 ```shell script
-go get github.com/deluan/lookup
+go get github.com/tiinusen/lookup
 ```
 
 To learn how to use it, take a look at the example files for [Lookup](examples_lookup_test.go) and 
