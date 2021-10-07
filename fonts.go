@@ -3,7 +3,7 @@ package lookup
 import (
 	"fmt"
 	"image"
-	"io/ioutil"
+	"io/fs"
 	"net/url"
 	"os"
 	"strings"
@@ -91,8 +91,23 @@ func (l *fontSymbolLookup) String() string {
 	return fmt.Sprintf("'%s'(%d,%d,%d)[%f]", l.fs.symbol, l.x, l.y, l.size, l.g)
 }
 
+var ocrFS fs.FS
+
+func init() {
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	ocrFS = os.DirFS(cwd)
+}
+
+// SetFileSystem sets the file system to be used by package
+func SetFileSystem(fs fs.FS) {
+	ocrFS = fs
+}
+
 func loadFont(path string) ([]*fontSymbol, error) {
-	files, err := ioutil.ReadDir(path)
+	files, err := fs.ReadDir(ocrFS, path)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +127,7 @@ func loadFont(path string) ([]*fontSymbol, error) {
 }
 
 func loadSymbol(path string, fileName string) (*fontSymbol, error) {
-	imageFile, err := os.Open(path + "/" + fileName)
+	imageFile, err := ocrFS.Open(path + "/" + fileName)
 	if err != nil {
 		return nil, err
 	}
