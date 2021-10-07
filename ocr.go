@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/shurcooL/httpfs/vfsutil"
 )
 
 // OCR implements a simple OCR based on the Lookup functions. It allows multiple fontsets,
@@ -48,7 +50,8 @@ func NewOCR(threshold float64, numThreads ...int) *OCR {
 //
 // This can be called multiple times, with different folders, to load different fontsets.
 func (o *OCR) LoadFont(fontPath string) error {
-	if _, err := os.Stat(fontPath); os.IsNotExist(err) {
+
+	if _, err := vfsutil.Stat(ocrFS, fontPath); os.IsNotExist(err) {
 		return err
 	}
 
