@@ -3,10 +3,12 @@ package lookup
 import (
 	"fmt"
 	"image"
-	"io/fs"
+	"net/http"
 	"net/url"
 	"os"
 	"strings"
+
+	"github.com/shurcooL/httpfs/vfsutil"
 )
 
 type fontSymbol struct {
@@ -91,23 +93,23 @@ func (l *fontSymbolLookup) String() string {
 	return fmt.Sprintf("'%s'(%d,%d,%d)[%f]", l.fs.symbol, l.x, l.y, l.size, l.g)
 }
 
-var ocrFS fs.FS
+var ocrFS http.FileSystem
 
 func init() {
 	cwd, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
-	ocrFS = os.DirFS(cwd)
+	ocrFS = http.FS(os.DirFS(cwd))
 }
 
 // SetFileSystem sets the file system to be used by package
-func SetFileSystem(fs fs.FS) {
+func SetFileSystem(fs http.FileSystem) {
 	ocrFS = fs
 }
 
 func loadFont(path string) ([]*fontSymbol, error) {
-	files, err := fs.ReadDir(ocrFS, path)
+	files, err := vfsutil.ReadDir(ocrFS, path)
 	if err != nil {
 		return nil, err
 	}
